@@ -48,8 +48,31 @@ eventHandler stateRef event =
 handleCommand :: IORef BotState -> D.Message -> D.DiscordHandler ()
 handleCommand stateRef m
     | isCommandWithMention "!crit20" m = handleAddCommand stateRef CritSuccess m
-    | isCommandWithMention "!crit1" m = handleAddCommand stateRef CritFailure m
+    | isCommandWithMention "!crit1" m  = handleAddCommand stateRef CritFailure m
+    | isCommandWithMention "!crits" m  = handleGetCommand stateRef m
     | otherwise = pure ()
+
+handleGetCommand :: IORef BotState -> D.Message -> D.DiscordHandler ()
+handleGetCommand stateRef m = Reader.ask >>= \handle -> liftIO $ do
+    -- React to the message
+    Reader.runReaderT (createReaction "thumbsup" m) handle
+
+    -- Get the state
+    state <- readIORef stateRef
+
+    -- Get crits
+    let t20s = fromMaybe 0 $ Map.lookup userId $ successes state
+        t1s  = fromMaybe 0 $ Map.lookup userId $ failures state
+        msg  = uname ++ " has **" ++ show t20s ++ "** nat 20s and **" ++ show t1s ++ "** nat 1s"  
+
+    -- Message results
+    Reader.runReaderT (createMessage (T.pack msg) m) handle
+
+    pure ()
+    where
+        targetUser = head $ D.messageMentions m
+        userId     = D.userId targetUser 
+        uname      = T.unpack $ D.userName targetUser
 
 handleAddCommand :: IORef BotState -> CritType -> D.Message -> D.DiscordHandler ()
 handleAddCommand stateRef critType m = Reader.ask >>= \handle -> liftIO $ do
@@ -81,9 +104,8 @@ handleAddCommand stateRef critType m = Reader.ask >>= \handle -> liftIO $ do
 
     -- Report current count
     let count       = fromMaybe 0 countM 
-        critTypeStr = if critType == CritSuccess then "successes" else "failures"
-        uname       = T.unpack $ D.userName targetUser
-        msg         = uname ++ " has " ++ show count ++ " crit " ++ critTypeStr
+        critTypeStr = if critType == CritSuccess then "nat 20s" else "nat 1s"
+        msg         = uname ++ " has **" ++ show count ++ "** " ++ critTypeStr
     Reader.runReaderT (createMessage (T.pack msg) m) handle
 
     pure ()
@@ -91,6 +113,7 @@ handleAddCommand stateRef critType m = Reader.ask >>= \handle -> liftIO $ do
         reactionName = if critType == CritSuccess then "ok_hand" else "cry"
         targetUser   = head $ D.messageMentions m
         userId       = D.userId targetUser 
+        uname        = T.unpack $ D.userName targetUser
 
 createReaction :: T.Text -> D.Message -> D.DiscordHandler (Either D.RestCallErrorCode ())
 createReaction reactionName m =
