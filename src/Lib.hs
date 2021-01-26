@@ -11,10 +11,11 @@ import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
 import qualified Data.Map as Map
 import qualified Control.Monad.Reader as Reader
+import           Data.Maybe (fromMaybe)
 import           Data.IORef (newIORef, readIORef, writeIORef, modifyIORef, IORef)
 import           System.IO (hPutStrLn, stderr)
 import           System.Environment (lookupEnv)
-import           Control.Monad (when, void)
+import           Control.Monad (when, unless, void)
 import           Control.Monad.Trans (liftIO)
 
 data CritType = CritSuccess | CritFailure deriving (Eq)
@@ -41,7 +42,7 @@ runBot = do
 eventHandler :: IORef BotState -> D.Event -> D.DiscordHandler ()
 eventHandler stateRef event =
     case event of
-        D.MessageCreate m -> when (not (fromBot m)) $ handleCommand stateRef m
+        D.MessageCreate m -> unless (fromBot m) $ handleCommand stateRef m
         _                 -> pure ()
 
 handleCommand :: IORef BotState -> D.Message -> D.DiscordHandler ()
@@ -67,7 +68,7 @@ handleAddCommand stateRef critType m = Reader.ask >>= \handle -> liftIO $ do
             }
 
     -- Log the username (Debug Purposes)
-    putStrLn $ "Added a crit for user: " ++ (show $ userId)
+    putStrLn $ "Added a crit for user: " ++ show userId
 
     -- Read the new total
     state <- readIORef stateRef
@@ -76,20 +77,20 @@ handleAddCommand stateRef critType m = Reader.ask >>= \handle -> liftIO $ do
         countM   = Map.lookup userId map
 
     -- Log the count (Debug Purposes)
-    putStrLn $ show countM
+    print countM
 
     -- Report current count
-    let count       = maybe 0 id countM 
+    let count       = fromMaybe 0 countM 
         critTypeStr = if critType == CritSuccess then "successes" else "failures"
         uname = T.unpack $ D.userName targetUser
-        msg         = uname ++ " has " ++ (show count) ++ " crit " ++ critTypeStr
+        msg         = uname ++ " has " ++ show count ++ " crit " ++ critTypeStr
     Reader.runReaderT (createMessage (T.pack msg) m) handle
 
     pure ()
     where
         reactionName = if critType == CritSuccess then "ok_hand" else "cry"
         targetUser   = head $ D.messageMentions m
-        userId       = D.userId $ targetUser 
+        userId       = D.userId targetUser 
 
 createReaction :: T.Text -> D.Message -> D.DiscordHandler (Either D.RestCallErrorCode ())
 createReaction reactionName m =
@@ -105,7 +106,7 @@ fromBot = D.userIsBot . D.messageAuthor
 isCommandWithMention :: T.Text -> D.Message -> Bool
 isCommandWithMention prefix m = 
     let hasPrefix = (prefix `T.isPrefixOf`) $ T.toLower $ D.messageText m
-        hasMention = 1 == (length $ D.messageMentions m)
+        hasMention = 1 == length (D.messageMentions m)
     in hasPrefix && hasMention
 
 
