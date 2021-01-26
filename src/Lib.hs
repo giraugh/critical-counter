@@ -82,7 +82,7 @@ handleAddCommand stateRef critType m = Reader.ask >>= \handle -> liftIO $ do
     -- Report current count
     let count       = fromMaybe 0 countM 
         critTypeStr = if critType == CritSuccess then "successes" else "failures"
-        uname = T.unpack $ D.userName targetUser
+        uname       = T.unpack $ D.userName targetUser
         msg         = uname ++ " has " ++ show count ++ " crit " ++ critTypeStr
     Reader.runReaderT (createMessage (T.pack msg) m) handle
 
@@ -105,7 +105,7 @@ fromBot = D.userIsBot . D.messageAuthor
 
 isCommandWithMention :: T.Text -> D.Message -> Bool
 isCommandWithMention prefix m = 
-    let hasPrefix = (prefix `T.isPrefixOf`) $ T.toLower $ D.messageText m
+    let hasPrefix  = (prefix `T.isPrefixOf`) $ T.toLower $ D.messageText m
         hasMention = 1 == length (D.messageMentions m)
     in hasPrefix && hasMention
 
