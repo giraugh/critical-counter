@@ -51,7 +51,7 @@ data CritType = CritSuccess | CritFailure deriving (Eq)
 
 runBot :: IO ()
 runBot = do
-    stateRef <- newIORef $ Map.empty 
+    stateRef <- newIORef Map.empty 
     tokenM <- lookupEnv "DISCORD_TOKEN"
     case tokenM of
         Nothing ->
@@ -99,7 +99,7 @@ handleGetAllCommand stateRef m = Reader.ask >>= \handle -> liftIO $ do
                     Right member ->
                         let user  = D.memberUser member
                             uname = T.unpack $ D.userName user 
-                            msg   = (italicise uname) ++ " has " ++ (fmtCounts counts)
+                            msg   = italicise uname ++ " has " ++ fmtCounts counts
                         in do
                             Reader.runReaderT (createMessage (T.pack msg) m) handle
                             pure ()
@@ -117,7 +117,7 @@ handleGetCommand stateRef m = Reader.ask >>= \handle -> liftIO $ do
 
     -- Get crits
     let counts = fromMaybe (0,0) $ Map.lookup userId state
-        msg    = (italicise uname) ++ " has " ++ (fmtCounts counts) 
+        msg    = italicise uname ++ " has " ++ fmtCounts counts 
 
     -- Message results
     Reader.runReaderT (createEmbed "" (T.pack msg) m) handle
@@ -136,9 +136,9 @@ handleAddCommand stateRef critType m = Reader.ask >>= \handle -> liftIO $ do
     -- Add a crit to the state
     case critType of
         CritSuccess -> modifyIORef stateRef $ \state ->
-            Map.insertWith (combineCounts) userId success state
+            Map.insertWith combineCounts userId success state
         CritFailure -> modifyIORef stateRef $ \state ->
-            Map.insertWith (combineCounts) userId failure state
+            Map.insertWith combineCounts userId failure state
 
     -- Read the new total
     state <- readIORef stateRef
@@ -148,10 +148,10 @@ handleAddCommand stateRef critType m = Reader.ask >>= \handle -> liftIO $ do
 
     -- Report current count
     let critTypeStr = if critType == CritSuccess then "nat 20" else "nat 1"
-        msg         = unwords $ [
+        msg         = unwords [
                           italicise uname
                         , "now has"
-                        , (embolden $ show count)
+                        , embolden $ show count
                         , pluralise critTypeStr count
                         ]
     Reader.runReaderT (createEmbed "" (T.pack msg) m) handle
@@ -196,7 +196,7 @@ isCommandWithMention prefix m =
 isCommandWithoutMention :: T.Text -> D.Message -> Bool
 isCommandWithoutMention prefix m =
     let hasPrefix  = (prefix `T.isPrefixOf`) $ T.toLower $ D.messageText m
-        hasNoMentions = 0 == length (D.messageMentions m)
+        hasNoMentions = null (D.messageMentions m)
     in hasPrefix && hasNoMentions
 
 fromBot :: D.Message -> Bool
