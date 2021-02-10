@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 8f7763376d84af299b76a1ad36f611507fd043a7bbc8970823c2cdc785803695
+-- hash: 9af766e9dcc1e354b0d00c1684a8c7b5a4ef4cbbf6b3c99781ee28ca14f02019
 
 name:           critical-counter
 version:        0.1.0.0
@@ -35,6 +35,7 @@ library
       base >=4.7 && <5
     , containers
     , discord-haskell
+    , lens
     , mtl
     , text
   default-language: Haskell2010
@@ -51,6 +52,7 @@ executable critical-counter-exe
     , containers
     , critical-counter
     , discord-haskell
+    , lens
     , mtl
     , text
   default-language: Haskell2010
@@ -68,6 +70,7 @@ test-suite critical-counter-test
     , containers
     , critical-counter
     , discord-haskell
+    , lens
     , mtl
     , text
   default-language: Haskell2010
