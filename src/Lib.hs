@@ -49,6 +49,9 @@ combineCounts (a, b) (c, d) = (a + c, b + d)
 type BotState = Map.Map D.UserId CritCounts
 data CritType = CritSuccess | CritFailure deriving (Eq)
 
+statePath :: FilePath
+statePath = "bot-state.dat"
+
 runBot :: IO ()
 runBot = do
     stateRef <- newIORef Map.empty 
@@ -61,8 +64,21 @@ runBot = do
             userFacingError <- D.runDiscord $ D.def
                 { D.discordToken = T.pack token
                 , D.discordOnEvent = eventHandler stateRef
+                , D.discordOnStart = botStart stateRef
+                , D.discordOnEnd = botEnd stateRef
                 }
             TIO.putStrLn userFacingError
+
+
+botStart :: IORef BotState -> D.DiscordHandler ()
+botStart stateRef = Reader.ask >>= \handle -> liftIO $ do
+    stateStr <- readFile statePath 
+    writeIORef stateRef $ read stateStr
+
+botEnd :: IORef BotState -> IO ()
+botEnd stateRef = do
+    state <- readIORef stateRef
+    writeFile statePath $ show state
 
 eventHandler :: IORef BotState -> D.Event -> D.DiscordHandler ()
 eventHandler stateRef event =
