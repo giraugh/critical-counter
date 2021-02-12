@@ -1,4 +1,4 @@
-FROM haskell:8.8.4
+FROM fpco/stack-build:lts-16.12
 
 WORKDIR /app
 ADD . /app
