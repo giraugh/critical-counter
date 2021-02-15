@@ -7,4 +7,18 @@ services:
             - .env
         ports:
             - 8080:8080
+    postgres:
+        image: postgres
+        restart: always
+        environment:
+            POSTGRES_USER: root
+            POSTGRES_PASSWORD: password
+            POSTGRES_DB: db
+        volumes:
+            - ./db:/var/lib/postgresql/data
+            - ./db.sql:/infile
+        ports:
+            - 5432:5432
 
+volumes:
+    db:

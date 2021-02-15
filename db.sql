@@ -1,0 +1,6 @@
+DROP TABLE IF EXISTS Test;
+
+CREATE TABLE Test (
+    id SERIAL PRIMARY KEY,
+    firstName VARCHAR(100)
+);
