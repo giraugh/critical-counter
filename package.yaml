@@ -25,6 +25,7 @@ dependencies:
 - discord-haskell
 - mtl
 - lens
+- directory
 
 library:
   source-dirs: src

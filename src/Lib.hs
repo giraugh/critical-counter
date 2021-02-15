@@ -18,6 +18,7 @@ import           System.IO (hPutStrLn, stderr)
 import           System.Environment (lookupEnv)
 import           Control.Monad (when, unless, void, forM_)
 import           Control.Monad.Trans (liftIO)
+import           System.Directory (doesFileExist)
 
 type CritCounts = (Int, Int)
 
@@ -72,8 +73,10 @@ runBot = do
 
 botStart :: IORef BotState -> D.DiscordHandler ()
 botStart stateRef = Reader.ask >>= \handle -> liftIO $ do
-    stateStr <- readFile statePath 
-    writeIORef stateRef $ read stateStr
+    exists <- doesFileExist statePath
+    when exists $ do
+        stateStr <- readFile statePath 
+        writeIORef stateRef $ read stateStr
 
 botEnd :: IORef BotState -> IO ()
 botEnd stateRef = do
