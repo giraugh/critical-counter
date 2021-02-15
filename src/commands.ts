@@ -15,6 +15,12 @@ export const handleGetAllCommand = (message : Message) => {
 export const handleGetCommand = (message : Message) => {
     // React to message
     message.addReaction('👍')
+
+    const member = message.mentionedMembers[0]
+    if (member) {
+        const crits = getCrits(member)
+        message.reply(`${member.username} has ${crits['Crit20']} nat20s and ${crits['Crit1']} crit1s`)
+    }
 }
 
 export const handleCritCommand = (message : Message, critType : CritType) => {

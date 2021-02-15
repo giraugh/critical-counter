@@ -1,7 +1,7 @@
-import { config } from "https://deno.land/x/dotenv/mod.ts"
+import { config } from '../deps.ts'
 
 // Load .env config
-const env = config()
+const env = { ...config(), ...Deno.env.toObject() }
 if (!env.DISCORD_TOKEN)
     throw Error('Expected DISCORD_TOKEN environment variable')
 

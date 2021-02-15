@@ -24,3 +24,6 @@ export const getCrits = (member : Member) : Crits => {
         return counts
     }
 }
+
+export const getAllCrits = () =>
+    crits.entries()

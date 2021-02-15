@@ -1,12 +1,12 @@
-import { startBot, Message } from 'https://deno.land/x/discordeno/mod.ts'
-import { token, commands } from './config.ts'
+import { startBot, Message } from './deps.ts'
+import { token, commands } from './src/config.ts'
 import {
     isCommandWithMention,
     isCommandWithoutMention,
     handleCritCommand,
     handleGetCommand,
     handleGetAllCommand
-} from './commands.ts'
+} from './src/commands.ts'
 
 const ready = () => console.log('Bot connected to Discord')
 
