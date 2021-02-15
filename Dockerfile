@@ -1,11 +1,10 @@
 FROM fpco/stack-build:lts-16.12
 
-WORKDIR /app
-ADD . /app
+RUN curl -L https://github.com/fpco/stack-docker-image-build/releases/download/v0.1.0.0/stack-docker-image-build > /usr/local/bin/stack-docker-image-build && chmod +x /usr/local/bin/stack-docker-image-build
 
-# RUN stack setup
-RUN stack build --copy-bins
+ADD ./ /src
 
-EXPOSE 80
+RUN cd /src && /usr/local/bin/stack-docker-image-build
 
+EXPOSE 8080 
 CMD ["critical-counter-exe"]
