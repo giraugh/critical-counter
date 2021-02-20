@@ -18,21 +18,24 @@ const critsFromDBResult = (res : any) : Crits => ({
     Crit1: res.crit1s
 })
 
-export const addCrit = async (member : Member, critType : CritType) => {
+export const addCrit = async (guildID : string, member : Member, critType : CritType) => {
     if (critType == 'Crit20') {
-        await db.addCrit20(member.id)        
+        await db.addCrit20(guildID, member.id)
     } else {
-        await db.addCrit1(member.id)
+        await db.addCrit1(guildID, member.id)
     }
 }
 
-export const getCrits = async (member : Member) : Promise<Crits> => {
-    const res = await db.getUserCrits(member.id)
-    return critsFromDBResult(res[0])
+export const getCrits = async (guildID : string, member : Member) : Promise<Crits> => {
+    const res = await db.getUserCrits(guildID, member.id)
+    if (res[0])
+        return critsFromDBResult(res[0])
+    else
+        return { userID: member.id, Crit20: 0, Crit1: 0 }
 }
 
-export const getAllCrits = async () => {
-    const res = await db.getAllUserCrits()
+export const getAllCrits = async (guildID : string) => {
+    const res = await db.getAllUserCrits(guildID)
     return res.map(critsFromDBResult)
 }
     

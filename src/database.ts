@@ -17,21 +17,21 @@ console.log(
 
 await client.connect()
 
-export const getAllUserCrits = async () => {
-    const res = await client.queryObject('SELECT * FROM Crits')
+export const getAllUserCrits = async (guildID : string) => {
+    const res = await client.queryObject(`SELECT * FROM Crits WHERE guildID='${guildID}'`)
     return res.rows
 }
 
-export const getUserCrits = async (userID : string) => {
+export const getUserCrits = async (guildID : string, userID : string) => {
     const res = await client.queryObject(
-        `SELECT * FROM Crits WHERE userID='${userID}'`
+        `SELECT * FROM Crits WHERE guildID='${guildID}' AND userID='${userID}'`
     )
     return res.rows
 }
 
-export const addCrit = (field : string) => async (userID : string) => {
+export const addCrit = (field : string) => async (guildID : string, userID : string) => {
     return await client.queryObject(
-        `INSERT INTO Crits (userID, ${field}) VALUES ('${userID}', 1) ON CONFLICT (userID) DO UPDATE SET ${field} = Crits.${field} + 1`
+        `INSERT INTO Crits (guildID, userID, ${field}) VALUES ('${guildID}', '${userID}', 1) ON CONFLICT (guildID, userID) DO UPDATE SET ${field} = Crits.${field} + 1`
     )
 }
 

@@ -34,7 +34,7 @@ export const handleShowGraphCommand = async (message : Message, critType : CritT
     message.addReaction('👍')
 
     // Get all crits
-    const allCrits = await getAllCrits()
+    const allCrits = await getAllCrits(message.guildID)
     let pairs : [string, number][] = []
     for (let crit of allCrits) {
         let uName = await getMemberName(crit.userID, message.guild)
@@ -59,7 +59,7 @@ export const handleGetAllCommand = async (message : Message) => {
     message.addReaction('👍')
 
     // get all crits and then format them
-    const crits = await getAllCrits()
+    const crits = await getAllCrits(message.guildID)
     const msgs = await Promise.all(crits.map(async (crits : Crits) => {
         return fmtCrits(crits, await getMemberName(crits.userID, message.guild))
     }))
@@ -72,7 +72,7 @@ export const handleGetCommand = async (message : Message) => {
 
     const member = message.mentionedMembers[0]
     if (member) {
-        const crits = await getCrits(member)
+        const crits = await getCrits(message.guildID, member)
         message.reply(fmtCrits(crits, member.username, true))  
     }
 }
@@ -86,10 +86,10 @@ export const handleCritCommand = async (message : Message, critType : CritType) 
     const member = message.mentionedMembers[0]
     if (member) {
         // Add the crit
-        await addCrit(member, critType)
+        await addCrit(message.guildID, member, critType)
 
         // Report the new crit count
-        const crits = await getCrits(member)
+        const crits = await getCrits(message.guildID, member)
         const critStr = critType == 'Crit20' ? 'nat 20' : 'nat 1'
         const pluralStr = crits[critType] > 1 ? 's' : ''
         message.reply(`*${member.username}* now has **${crits[critType]}** ${critType}${pluralStr}`)
@@ -131,7 +131,7 @@ const getMemberName = async (userID : string, guild? : Guild) : Promise<string> 
 }
 
 const fetchMembersWithCrits = async (guild : Guild) => {
-    const crits = await getAllCrits()
+    const crits = await getAllCrits(guild.id)
     const userIDs = crits.map(({ userID }) => userID)
     const members = await fetchMembers(guild, { userIDs })
     return members
