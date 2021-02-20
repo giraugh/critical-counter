@@ -6,7 +6,7 @@ Discord bot for keeping track of natural 20 and natural 1 rolls in Role Playing 
 
 First [invite the bot to your server](https://critical-counter-3rz4fnszrq-ts.a.run.app)
 
-Then run a `!help` command to list the available commands.
+Then run `!helpcc` command to list the available commands.
 
 ## Building and Running
 

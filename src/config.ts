@@ -12,7 +12,7 @@ export const commands = {
     getCrits: '!crits',
     showGraph20: '!graph20',
     showGraph1: '!graph1',
-    help: '!help'
+    help: '!helpcc'
 }
 
 export const commandHelp = {
