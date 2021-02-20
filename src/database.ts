@@ -9,7 +9,7 @@ const clientConfig = {
     user: env['POSTGRES_USER'] ?? 'root',
     password: env['POSTGRES_PASSWORD'] ?? 'password' ,
     database: env['POSTGRES_DB'] ?? 'db',
-    port: Number(env['POSTGRES_PORT']) ?? 5432,
+    port: Number(env['POSTGRES_PORT'] ?? 5432),
     hostname: env['POSTGRES_HOST']
 }
 const client = new Client(clientConfig)
