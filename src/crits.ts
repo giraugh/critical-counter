@@ -1,29 +1,38 @@
 import { Member } from 'https://deno.land/x/discordeno/mod.ts'
+import * as db from './database.ts'
 
 export type CritType = 'Crit20' | 'Crit1'
 
 export interface Crits {
-    'Crit20': number,
-    'Crit1': number
+    Crit20: number,
+    Crit1: number
+    userId: string
 }
 
 // temporary storage solution
 const crits = new Map()
 
-export const addCrit = (member : Member, critType : CritType) => {
-    const counts = getCrits(member)
-    const counts_ = { ...counts, [critType]: counts[critType] + 1 }
-    crits.set(member.id, counts_)
-}
+const critsFromDBResult = (res : any) : Crits => ({
+    userId: res.userid,
+    Crit20: res.crit20s,
+    Crit1: res.crit1s
+})
 
-export const getCrits = (member : Member) : Crits => {
-    if (crits.has(member.id)) {
-        return crits.get(member.id)
+export const addCrit = async (member : Member, critType : CritType) => {
+    if (critType == 'Crit20') {
+        await db.addCrit20(member.id)        
     } else {
-        const counts = { 'Crit20': 0, 'Crit1': 0 }
-        return counts
+        await db.addCrit1(member.id)
     }
 }
 
-export const getAllCrits = () =>
-    crits.entries()
+export const getCrits = async (member : Member) : Promise<Crits> => {
+    const res = await db.getUserCrits(member.id)
+    return critsFromDBResult(res[0])
+}
+
+export const getAllCrits = async () => {
+    const res = await db.getAllUserCrits()
+    return res.map(critsFromDBResult)
+}
+    

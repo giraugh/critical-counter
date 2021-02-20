@@ -5,7 +5,9 @@ import {
     isCommandWithoutMention,
     handleCritCommand,
     handleGetCommand,
-    handleGetAllCommand
+    handleGetAllCommand,
+    handleShowGraphCommand,
+    handleHelpCommand
 } from './src/commands.ts'
 
 const ready = () => console.log('Bot connected to Discord')
@@ -16,6 +18,9 @@ const messageCreate = (message : Message) => {
     const isCrit1Comm = isCommandWithMention(commands.addCrit1, message)
     const isGetComm = isCommandWithMention(commands.getCrits, message)
     const isGetAllComm = isCommandWithoutMention(commands.getCrits, message)
+    const isGraph20sComm = isCommandWithoutMention(commands.showGraph20, message)
+    const isGraph1sComm = isCommandWithoutMention(commands.showGraph1, message)
+    const isHelpComm = isCommandWithoutMention(commands.help, message)
 
     // Handle add commands
     if (isCrit20Comm || isCrit1Comm)
@@ -23,11 +28,18 @@ const messageCreate = (message : Message) => {
 
     // handle get command
     if (isGetComm)
-        handleGetCommand(message)
+       handleGetCommand(message)
 
     // handle get all command
     if (isGetAllComm)
         handleGetAllCommand(message)
+
+    // handle show graph command
+    if (isGraph1sComm || isGraph20sComm)
+        handleShowGraphCommand(message, isGraph20sComm ? 'Crit20' : 'Crit1')
+
+    if (isHelpComm)
+        handleHelpCommand(message)
 }
 
 startBot({
