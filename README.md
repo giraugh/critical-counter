@@ -76,7 +76,7 @@ Start the postgres database
 docker-compose up postgres
 ```
 
-Start the bot
+Once the database is ready, in a seperate shell you can start the bot
 
 ```bash
 denon run --allow-net --allow-read --allow-env main.ts
