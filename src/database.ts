@@ -1,7 +1,7 @@
 import { Client } from '../deps.ts'
 import { config } from '../deps.ts'
 
-export type CritsDBFields = 'userID' | 'guildID' | 'crit1s' | 'crit20s'
+export type CritsDBFields = 'userid' | 'guildid' | 'crit1s' | 'crit20s'
 export type CritsDBRow = Record<CritsDBFields, unknown>
 
 const env = { ...config(), ...Deno.env.toObject() }

@@ -1,13 +1,17 @@
 import { startBot, Message } from './deps.ts'
 import { serve } from './deps.ts'
 import { token } from './src/config.ts'
-import { handleMessage } from './src/handlers.ts'
+import { commands, isCommand } from './src/commands.ts'
 
 const ready = () =>
     console.log('Bot connected to Discord')
 
 const messageCreate = (message : Message) => {
-    handleMessage(message)
+    for (let command of commands) {
+        if (isCommand(command, message)) {
+            command.handler(message, command)
+        }
+    }
 }
 
 startBot({

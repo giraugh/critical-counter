@@ -1,13 +1,11 @@
 import { Message } from '../deps.ts'
 import { CritType } from './crits.ts'
-import {
-    handleAddCrit,
-    handleGetAllCrits,
-    handleGetCrits,
-    handleSetCrits,
-    handleShowGraph,
-    handleShowHelp
-} from './handlers.ts'
+import { handleAddCrit } from './commands/addCrit.ts'
+import { handleGetCrits } from './commands/getCrits.ts'
+import { handleGetAllCrits } from './commands/getAllCrits.ts'
+import { handleSetCrits } from './commands/setCrits.ts'
+import { handleShowGraph } from './commands/showGraph.ts'
+import { handleShowHelp } from './commands/showHelp.ts'
 
 export interface Command {
     name: string
@@ -21,7 +19,7 @@ export interface Command {
 
 type CommandHandler = (message : Message, command : Command) => Promise<void>
 
-export const makeCommands : () => Command[] = () => [
+export const commands : Command[] = [
     {
         name: 'Add Crit 20',
         command: 'crit20',
@@ -89,6 +87,7 @@ export const makeCommands : () => Command[] = () => [
         mentions: 0,
         usage: 'graph1', 
         description: 'Show a graph of natural 1s for all users.',
+        critType: 'Crit1',
         handler: handleShowGraph
     },
     {

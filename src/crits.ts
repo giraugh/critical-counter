@@ -33,13 +33,13 @@ export const getCrits = async (guildID : string, member : Member) : Promise<Crit
         return { userID: member.id, Crit20: 0, Crit1: 0 }
 }
 
-export const getAllCrits = async (guildID : string) => {
+export const getAllCrits = async (guildID : string) : Promise<Crits[]> => {
     const res = await db.getAllUserCrits(guildID)
     return res.map(critsFromRow)
 }
 
 const critsFromRow = (row : db.CritsDBRow) : Crits => ({
-    userID: row.userID as string,
+    userID: row.userid as string,
     Crit20: row.crit20s as number,
     Crit1: row.crit1s as number
 })
