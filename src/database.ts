@@ -1,6 +1,9 @@
 import { Client } from '../deps.ts'
 import { config } from '../deps.ts'
 
+export type CritsDBFields = 'userID' | 'guildID' | 'crit1s' | 'crit20s'
+export type CritsDBRow = Record<CritsDBFields, unknown>
+
 const env = { ...config(), ...Deno.env.toObject() }
 const clientConfig = {
     user: env['POSTGRES_USER'] ?? 'root',
@@ -19,12 +22,12 @@ console.log(
 
 await client.connect()
 
-export const getAllUserCrits = async (guildID : string) => {
+export const getAllUserCrits = async (guildID : string) : Promise<CritsDBRow[]> => {
     const res = await client.queryObject(`SELECT * FROM Crits WHERE guildID='${guildID}'`)
     return res.rows
 }
 
-export const getUserCrits = async (guildID : string, userID : string) => {
+export const getUserCrits = async (guildID : string, userID : string): Promise<CritsDBRow[]> => {
     const res = await client.queryObject(
         `SELECT * FROM Crits WHERE guildID='${guildID}' AND userID='${userID}'`
     )

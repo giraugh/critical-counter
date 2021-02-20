@@ -9,15 +9,6 @@ export interface Crits {
     userID: string
 }
 
-// temporary storage solution
-const crits = new Map()
-
-const critsFromDBResult = (res : any) : Crits => ({
-    userID: res.userid,
-    Crit20: res.crit20s,
-    Crit1: res.crit1s
-})
-
 export const addCrit = async (guildID : string, member : Member, critType : CritType) => {
     if (critType == 'Crit20') {
         await db.addCrit20(guildID, member.id)
@@ -37,13 +28,19 @@ export const setCrits = async (guildID : string, member : Member, critType : Cri
 export const getCrits = async (guildID : string, member : Member) : Promise<Crits> => {
     const res = await db.getUserCrits(guildID, member.id)
     if (res[0])
-        return critsFromDBResult(res[0])
+        return critsFromRow(res[0])
     else
         return { userID: member.id, Crit20: 0, Crit1: 0 }
 }
 
 export const getAllCrits = async (guildID : string) => {
     const res = await db.getAllUserCrits(guildID)
-    return res.map(critsFromDBResult)
+    return res.map(critsFromRow)
 }
-    
+
+const critsFromRow = (row : db.CritsDBRow) : Crits => ({
+    userID: row.userID as string,
+    Crit20: row.crit20s as number,
+    Crit1: row.crit1s as number
+})
+
