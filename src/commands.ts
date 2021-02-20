@@ -37,7 +37,7 @@ export const handleShowGraphCommand = async (message : Message, critType : CritT
     const allCrits = await getAllCrits()
     let pairs : [string, number][] = []
     for (let crit of allCrits) {
-        let uName = await getMemberName(crit.userId, message.guild)
+        let uName = await getMemberName(crit.userID, message.guild)
         let count = crit[critType]
         pairs.push([uName, count])
     }
@@ -61,7 +61,7 @@ export const handleGetAllCommand = async (message : Message) => {
     // get all crits and then format them
     const crits = await getAllCrits()
     const msgs = await Promise.all(crits.map(async (crits : Crits) => {
-        return fmtCrits(crits, await getMemberName(crits.userId, message.guild))
+        return fmtCrits(crits, await getMemberName(crits.userID, message.guild))
     }))
     message.reply(msgs.join('\n'))
 }
@@ -110,21 +110,21 @@ const fmtCrits = (crits : Crits, name? : String, updated? : boolean) => {
     return `*${name}* ${infix}has **${crits['Crit20']}** nat 20s and **${crits['Crit1']}** nat 1s`
 }
 
-const getMemberName = async (userId : string, guild? : Guild) : Promise<string> => {
+const getMemberName = async (userID : string, guild? : Guild) : Promise<string> => {
     // Check cache
-    const memberFromCache = cache.members.get(userId)
+    const memberFromCache = cache.members.get(userID)
     if (memberFromCache)
         return memberFromCache.username
 
     // On cache miss, fetch all members (will catch for future calls)
     if (!guild)
-        return String(userId)
+        return String(userID)
 
     const members = await fetchMembersWithCrits(guild)
-    const member = members.get(userId)
+    const member = members.get(userID)
     if (!member) {
-        console.warn(`Unable to find member w/ id "${userId}"`)
-        return String(userId)
+        console.warn(`Unable to find member w/ id "${userID}"`)
+        return String(userID)
     }
     
     return member.username
@@ -132,7 +132,7 @@ const getMemberName = async (userId : string, guild? : Guild) : Promise<string> 
 
 const fetchMembersWithCrits = async (guild : Guild) => {
     const crits = await getAllCrits()
-    const userIDs = crits.map(({ userId }) => userId)
+    const userIDs = crits.map(({ userID }) => userID)
     const members = await fetchMembers(guild, { userIDs })
     return members
 }

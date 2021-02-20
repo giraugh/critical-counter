@@ -6,14 +6,14 @@ export type CritType = 'Crit20' | 'Crit1'
 export interface Crits {
     Crit20: number,
     Crit1: number
-    userId: string
+    userID: string
 }
 
 // temporary storage solution
 const crits = new Map()
 
 const critsFromDBResult = (res : any) : Crits => ({
-    userId: res.userid,
+    userID: res.userid,
     Crit20: res.crit20s,
     Crit1: res.crit1s
 })

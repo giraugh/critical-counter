@@ -22,16 +22,16 @@ export const getAllUserCrits = async () => {
     return res.rows
 }
 
-export const getUserCrits = async (userId : string) => {
+export const getUserCrits = async (userID : string) => {
     const res = await client.queryObject(
-        `SELECT * FROM Crits WHERE userid='${userId}'`
+        `SELECT * FROM Crits WHERE userID='${userID}'`
     )
     return res.rows
 }
 
-export const addCrit = (field : string) => async (userId : string) => {
+export const addCrit = (field : string) => async (userID : string) => {
     return await client.queryObject(
-        `INSERT INTO Crits (userid, ${field}) VALUES ('${userId}', 1) ON CONFLICT (userid) DO UPDATE SET ${field} = Crits.${field} + 1`
+        `INSERT INTO Crits (userID, ${field}) VALUES ('${userID}', 1) ON CONFLICT (userID) DO UPDATE SET ${field} = Crits.${field} + 1`
     )
 }
 
