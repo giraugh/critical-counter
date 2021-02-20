@@ -10,6 +10,8 @@ export const commands = {
     addCrit20: '!crit20',
     addCrit1: '!crit1',
     getCrits: '!crits',
+    setCrit20: '!set20',
+    setCrit1: '!set1',
     showGraph20: '!graph20',
     showGraph1: '!graph1',
     help: '!helpcc'

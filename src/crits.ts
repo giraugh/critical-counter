@@ -26,6 +26,14 @@ export const addCrit = async (guildID : string, member : Member, critType : Crit
     }
 }
 
+export const setCrits = async (guildID : string, member : Member, critType : CritType, amount : number) => {
+    if (critType == 'Crit20') {
+        await db.setCrits20(guildID, member.id, amount)
+    } else {
+        await db.setCrits1(guildID, member.id, amount)
+    }
+}
+
 export const getCrits = async (guildID : string, member : Member) : Promise<Crits> => {
     const res = await db.getUserCrits(guildID, member.id)
     if (res[0])
