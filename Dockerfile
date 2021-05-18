@@ -12,4 +12,4 @@ RUN deno cache deps.ts
 COPY . .
 RUN deno cache main.ts
 
-CMD ["run", "--unstable", "--allow-net", "--allow-read", "--allow-env", "main.ts"]
+CMD ["run", "--unstable", "--allow-net", "--allow-read", "--allow-env", "--allow-write", "main.ts"]

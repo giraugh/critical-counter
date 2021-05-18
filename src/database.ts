@@ -1,32 +1,31 @@
-import { Client } from "../deps.ts";
+import { DB } from "../deps.ts";
 import { config } from "../deps.ts";
 
 export type CritsDBFields = "userid" | "guildid" | "crit1s" | "crit20s";
 export type CritsDBRow = Record<CritsDBFields, unknown>;
 
 const env = { ...config(), ...Deno.env.toObject() };
-const clientConfig = env["DB_STRING"];
-const client = new Client(clientConfig);
-
-await client.connect();
+const db = new DB("crits.db");
 
 export const getAllUserCrits = async (
   guildID: string
 ): Promise<CritsDBRow[]> => {
-  const res = await client.queryObject(
-    `SELECT * FROM Crits WHERE guildID='${guildID}'`
-  );
-  return res.rows;
+  const res = db
+    .query(`SELECT * FROM Crits WHERE guildID='${guildID}'`)
+    .asObjects();
+  return [...res] as CritsDBRow[];
 };
 
 export const getUserCrits = async (
   guildID: string,
   userID: string
 ): Promise<CritsDBRow[]> => {
-  const res = await client.queryObject(
-    `SELECT * FROM Crits WHERE guildID='${guildID}' AND userID='${userID}'`
-  );
-  return res.rows;
+  const res = db
+    .query(
+      `SELECT * FROM Crits WHERE guildID='${guildID}' AND userID='${userID}'`
+    )
+    .asObjects();
+  return [...res] as CritsDBRow[];
 };
 
 export const setCrits = (field: string) => async (
@@ -34,7 +33,7 @@ export const setCrits = (field: string) => async (
   userID: string,
   amount: number
 ) => {
-  return await client.queryObject(
+  return db.query(
     `INSERT INTO Crits (guildID, userID, ${field}) VALUES ('${guildID}', '${userID}', ${amount}) ON CONFLICT (guildID, userID) DO UPDATE SET ${field} = '${amount}'`
   );
 };
@@ -43,7 +42,7 @@ export const addCrit = (field: string) => async (
   guildID: string,
   userID: string
 ) => {
-  return await client.queryObject(
+  return db.query(
     `INSERT INTO Crits (guildID, userID, ${field}) VALUES ('${guildID}', '${userID}', 1) ON CONFLICT (guildID, userID) DO UPDATE SET ${field} = Crits.${field} + 1`
   );
 };
