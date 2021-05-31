@@ -1,9 +1,8 @@
-import { config } from "../deps.ts";
+import { config } from '../deps.ts'
 
 // Load .env config
-const env = { ...config(), ...Deno.env.toObject() };
+const env = { ...config(), ...Deno.env.toObject() }
 if (!env.DISCORD_TOKEN)
-  throw Error("Expected DISCORD_TOKEN environment variable");
+    throw Error('Expected DISCORD_TOKEN environment variable')
 
-export const dbPath = env.DB_PATH ?? "./main.db";
-export const token = env.DISCORD_TOKEN;
+export const token = env.DISCORD_TOKEN

@@ -1,11 +1,11 @@
 import { DB } from "../deps.ts";
 import { config } from "../deps.ts";
-import { dbPath } from "./config.ts";
 
 export type CritsDBFields = "userid" | "guildid" | "crit1s" | "crit20s";
 export type CritsDBRow = Record<CritsDBFields, unknown>;
 
-const db = new DB(dbPath);
+const env = { ...config(), ...Deno.env.toObject() };
+const db = new DB("crits.db");
 
 export const getAllUserCrits = async (
   guildID: string
