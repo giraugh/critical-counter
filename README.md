@@ -27,7 +27,7 @@ git clone http://github.com/retroverse/critical-counter.git
 cd into the repo
 
 ```bash
-cd critical-coutner
+cd critical-counter
 ```
 
 You will require a discord token to run the bot. Go to the [Discord Developer Console](https://discord.com/developers/applications), create an application, create a bot and copy the bot token. We will put the bot token in a `.env` file.
